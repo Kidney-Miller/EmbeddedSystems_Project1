@@ -3,6 +3,7 @@
  *
  *  Created on: Sep 23, 2022
  *  Author: krmiller21
+ *  Using GPIO Port B
  */
 
 
@@ -10,6 +11,20 @@
 
 //Includes:
 #include "Pong_Gameplay.h"
+
+//Pong Stuff:
+
+enum ball_directions ball_opposite_direction(enum ball_directions d) {
+	switch(d) {
+		case BALL_UP: return BALL_DOWN; break;
+		case BALL_DOWN: return BALL_UP; break;
+		case BALL_LEFT: return BALL_RIGHT; break;
+		case BALL_RIGHT: return BALL_LEFT; break;
+		default: return d;
+	}
+}
+
+//SNAKE CODE
 
 // MIT License - Sean Carroll - (c) 2022
 // carrolls@trine.edu 2022.7.28 - merged into project
