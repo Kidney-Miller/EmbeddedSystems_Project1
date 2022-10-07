@@ -1,0 +1,16 @@
+/*
+ * pong_enum.h
+ *
+ *  Created on: Sep 30, 2022
+ *      Author: krmiller21
+ */
+
+#ifndef INC_PONG_ENUMS_H_
+#define INC_PONG_ENUMS_H_
+
+enum player_directions {PLYR_UP, PLYR_DOWN, PLYR_STAY};
+enum ball_directions {BALL_UP, BALL_DOWN, BALL_RIGHT, BALL_LEFT, BALL_RIGHT, BALL_UPRIGHT, BALL_DOWNRIGHT, BALL_UPLEFT, BALL_DOWNLEFT};
+enum keypad_buttonPress {ZERO_PRESSED, ONE_PRESSED, TWO_PRESSED, THREE_PRESSED, FOUR_PRESSED,
+		FIVE_PRESSED, SIX_PRESSED, SEVEN_PRESSED, EIGHT_PRESSED, NINE_PRESSED};
+
+#endif /* INC_PONG_ENUMS_H_ */

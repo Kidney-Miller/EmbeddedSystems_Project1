@@ -32,6 +32,7 @@ typedef union {
 		int int_val;
 		float float_val;
 		enum Twist twist;
+		enum keypad_buttonPress buttonPressed;
 } Q_data;
 
 typedef struct smc_queue_struct {
