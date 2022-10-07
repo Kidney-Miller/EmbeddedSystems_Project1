@@ -108,14 +108,23 @@ bool ball_plot(const pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
 			} //Display Error.
 	
 	}
-
-	if (b[x][y] == 1) { good = plot_collision(p, b);}
-	else {
-		b[x][y] = -1; //Ball Value is -1.
-		}
+	
+	b[x][y] = -1; //Ball Value is -1.
 
 
 	return good;
+}
+
+//Checks if ball hit player or wall
+bool detect_collision(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
+	p->ball_hit = false;
+	int8_t x = p->ball.x;
+	int8_t y = p->ball.y;
+	if(b[x][y] == 1) {
+		p->ball_hit = true;
+	}
+	bool done = true;
+	return done;
 }
 
 bool plot_collision(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
@@ -128,15 +137,15 @@ bool plot_collision(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
 	newHeading = ball_opposite_direction(newHeading);
 
 	switch (newHeading) {
-		//LEFT 
+	//LEFT 
 	case BALL_LEFT: x--; break;
-		// RIGHT
+	// RIGHT
 	case BALL_RIGHT: x++; break;
-		//UP
+	//UP
 	case BALL_UP: y++; break;
 	case BALL_UPLEFT: x--; y++; break;
 	case BALL_UPRIGHT: x++; y++; break;
-		//DOWN
+	//DOWN
 	case BALL_DOWN: y--; break;
 	case BALL_DOWNLEFT: x--;  y--; break;
 	case BALL_DOWNRIGHT: x++;  y--; break;
@@ -173,6 +182,7 @@ void pong_game_init(pong_game* p) {
 	p->ball.x = initial_ball.x;
 	p->ball.y = initial_ball.y;
 	p->heading = BALL_UPRIGHT; // Start off towards the upper right.
+	p->ball_hit = false;
 }
 
 void pacify_compiler() {
@@ -205,6 +215,7 @@ void player1_heading_update(pong_game* p, Smc_queue* q) {
 	}
 }
 
+//Update Player 2 heading 
 void player2_heading_update(pong_game* p, Smc_queue* q) {
 	Q_data msg;
 	bool data_available;
@@ -231,50 +242,40 @@ void player2_heading_update(pong_game* p, Smc_queue* q) {
 }
 
 void ball_heading_update(pong_game* p) {
+	
 		switch (p->ball_heading) {
+		case BALL_UP: 
+			p->ball_heading = (p->ball_hit == false) ? BALL_UP : BALL_DOWN;
+			break;
 		case BALL_UPLEFT:
-			p->ball_heading = (p->ball.x ==) ?
-				SNAKE_COMPASS_E : SNAKE_COMPASS_W;
+			p->ball_heading = (p->ball_hit == false) ? BALL_UPLEFT : BALL_UPRIGHT;
 			break;
-		case SNAKE_COMPASS_E:
-			s->heading = (msg.twist == QUADKNOB_CW) ?
-				SNAKE_COMPASS_S : SNAKE_COMPASS_N;
+		case BALL_UPRIGHT:
+			p->ball_heading = (p->ball_hit == false) ? BALL_DOWNRIGHT : BALL_UPRIGHT;
 			break;
-		case SNAKE_COMPASS_S:
-			s->heading = (msg.twist == QUADKNOB_CW) ?
-				SNAKE_COMPASS_W : SNAKE_COMPASS_E;
+		case BALL_DOWN:
+			p->ball_heading = (p->ball_hit == false) ? BALL_DOWN : BALL_UP;
 			break;
-		case SNAKE_COMPASS_W:
-			s->heading = (msg.twist == QUADKNOB_CW) ?
-				SNAKE_COMPASS_N : SNAKE_COMPASS_S;
+		case BALL_DOWNLEFT:
+			p->ball_heading = (p->ball_hit == false) ? BALL_DOWNLEFT : BALL_UPLEFT;
+			break;
+		case BALL_DOWNRIGHT:
+			p->ball_heading = (p->ball_hit == false) ? BALL_DOWNRIGHT : BALL_DOWNLEFT;
+			break;
+		case BALL_DOWNRIGHT:
+			p->ball_heading = (p->ball_hit == false) ? BALL_DOWNRIGHT : BALL_DOWNLEFT;
+			break;
+		case BALL_LEFT:
+			p->ball_heading = (p->ball_hit == false) ? BALL_LEFT : BALL_RIGHT;
+			break;
+		case BALL_RIGHT:
+			p->ball_heading = (p->ball_hit == false) ? BALL_RIGHT : BALL_LEFT;
 			break;
 		default: //s->heading remains unchanged. No good way to say this in C.
 			pacify_compiler();
-		}
-
-}
-//Checks if ball is allowed to bounce. (NOT USED)
-bool ball_bounce(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
-	const XY_PT current_x = p->ball.x;
-	const XY_PT current_y = p->ball.y;
-	bool bounce = false;
-
-	if (b[x][y] == 1) {
-		//If ball hits player.
-		bounce = true;
-	} else if (current_x == 1 && current_y == 0 || current_x == 2 && current_y == 0 
-		|| current_x == 3 && current_y == 0 || current_x == 4 && current_y == 0 ||
-		current_x == 5 && current_y == 0 || current_x == 6 && current_y == 0) {
-			//If ball hits bottom floor bounce.
-			bounce = true;
-	} else if (current_x == 1 && current_y == 7 || current_x == 2 && current_y == 7
-		|| current_x == 3 && current_y == 7 || current_x == 4 && current_y == 7 ||
-		current_x == 5 && current_y == 7 || current_x == 6 && current_y == 7) {
-			//If ball hits top floor bounce.
-			bounce = true;
 	}
-	return bounce;
 }
+
 
 
 void pong_periodic_play(pong_game* p) {
