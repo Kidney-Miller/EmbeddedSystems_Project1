@@ -7,7 +7,7 @@
 
 #ifndef SRC_PONG_GAMEPLAY_H_
 #define SRC_PONG_GAMEPLAY_H_
-
+#define BALL_BOUNDS (((uint16_t)6))
 //Code Refrences Go Here:
 #include "pong_enums.h"
 
@@ -16,6 +16,7 @@ typedef struct {int16_t x; int16_t y;} XY_PT;
 typedef struct {
 	XY_PT player1;
 	XY_PT player2;
+	uint8_t player_length;
 	XY_PT ball;
 	enum  player_directions p1_heading;
 	enum  player_directions p2_heading;
