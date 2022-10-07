@@ -18,9 +18,10 @@ typedef struct {
 	XY_PT player2;
 	uint8_t player_length;
 	XY_PT ball;
-	enum  player_directions p1_heading;
-	enum  player_directions p2_heading;
-	enum  ball_directions ball_heading;
+	bool ball_hit;
+	enum player_directions p1_heading;
+	enum player_directions p2_heading;
+	enum ball_directions ball_heading;
 } pong_game;
 
 enum ball_directions ball_opposite_direction(enum ball_directions d);
