@@ -24,13 +24,20 @@ typedef struct {
 	enum ball_directions ball_heading;
 } pong_game;
 
+//UPDATED
 enum ball_directions ball_opposite_direction(enum ball_directions d);
-void pong_game_init(pong_game* p);
-void pong_game_cleanup(pong_game* p);
-void pong_game_periodic_play(pong_game* p);
-void pong_place_ball(pong_game * p, const int8_t b[CHECKS_WIDE][CHECKS_WIDE]);
-bool p1_plot(const pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]);
-bool p2_plot(const pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]);
+bool player1_plot(const pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]);
+bool player2_plot(const pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]);
 bool ball_plot(const pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]);
+bool detect_collision(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]);
+void get_collision_cords(pong_game* p);
+void pong_game_init(pong_game* p);
+void pacify_compiler();
+void player1_heading_update(pong_game* p, Smc_queue* q);
+void player2_heading_update(pong_game* p, Smc_queue* q);
+void ball_heading_update(pong_game* p);
+bool isBallDead(pong_game* p);
+XY_PT nextBallCords(const pong_game* p);
+void pong_periodic_play(pong_game* p);
 
 #endif /* SRC_PONG_GAMEPLAY_H_ */
