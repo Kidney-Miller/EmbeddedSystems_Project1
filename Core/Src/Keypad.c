@@ -11,13 +11,11 @@ char get_keypd_key(void)
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET); // Row 3 on standby
 	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3) == GPIO_PIN_RESET)
 	{
-		while(!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3));
 		key_val = '9';
 		return key_val;
 	}
 	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == GPIO_PIN_RESET)
 	{
-		while(!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5));
 		key_val = '7';
 		return key_val;
 	}
@@ -26,13 +24,11 @@ char get_keypd_key(void)
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET); //Row 3 Being Checked
 	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3) == GPIO_PIN_RESET)
 	{
-		while(!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3));
 		key_val = '3';
 		return key_val;
 	}
 	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == GPIO_PIN_RESET)
 	{
-		while(!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5));
 		key_val = '1';
 		return key_val;
 	}
