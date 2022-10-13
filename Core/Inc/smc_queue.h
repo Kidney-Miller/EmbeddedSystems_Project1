@@ -37,7 +37,7 @@ typedef union {
 typedef struct smc_queue_struct {
 	// ATTRIBUTES
 	size_t cap;
-	size_t burden;
+	size_t items;
 	size_t tail;
 	size_t head;
 	Q_data buffer[SMC_Q_BUFSIZE];
