@@ -1,9 +1,11 @@
 /*
- * smc_queue_struct.h
+ * circle_queue_struct.h
  *
  *  Created on: Jul 15, 2022
  *      Author: carrolls
  */
+
+// This is the edited version of Dr. Carrol's smc_queue.h to replace it with a circular queue
 
 #ifndef INC_SMC_QUEUE_STRUCT_H_
 #define INC_SMC_QUEUE_STRUCT_H_
@@ -28,17 +30,17 @@
 
 
 
+
 typedef union {
 		int int_val;
 		float float_val;
 		enum Twist twist;
-		enum keypad_buttonPress buttonPressed;
 } Q_data;
 
 typedef struct smc_queue_struct {
 	// ATTRIBUTES
 	size_t cap;
-	size_t items;
+	size_t burden;
 	size_t tail;
 	size_t head;
 	Q_data buffer[SMC_Q_BUFSIZE];

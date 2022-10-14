@@ -1,17 +1,14 @@
 /*
- * smc_queue_struct.c
+ * circle_queue_struct.c
  *
  *  Created on: Jul 15, 2022
  *      Author: carrolls
- *
- *  Edited by: gleasonn
- *  Edited on: Oct 13, 2022
  */
 
 // This is the edited version of Dr. Carrol's smc_queue.c to replace it with a circular queue
 
 
-#include "smc_queue.h"
+#include "circle_queue.h"
 #include "snake_enums.h"
 
 Smc_queue* smc_queue_init(Smc_queue* q){
