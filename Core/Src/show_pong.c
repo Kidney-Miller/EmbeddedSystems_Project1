@@ -11,7 +11,7 @@
 #include "pong_enums.h"
 #include "display_DOGS_102.h"
 
-void incremental_show_pong(const pong_game* p, bool board_updated){
+void incremental_show_pong(pong_game* p, bool board_updated){
 	static int16_t x = 0;
 	static int16_t y = 0;
 	static int8_t b[CHECKS_WIDE][CHECKS_WIDE] = {0};
@@ -26,7 +26,7 @@ void incremental_show_pong(const pong_game* p, bool board_updated){
 		// paint canvas with ball and players
 		player1_plot(p, b);
 		player2_plot(p, b);
-		bool ball_plot(p, b);
+		ball_plot(p, b);
 
 		// restart at top-left
 		x = 0;
