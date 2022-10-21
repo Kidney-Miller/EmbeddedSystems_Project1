@@ -91,40 +91,47 @@ void pong_main(void){
 			display_checkerboard();
 			while(1);
 		}
-/*
+
 #ifndef TEST_WITH_INPUT
-		char key = 'N';
-		static int turns = 0;
-		// Normally "check for user input every 1 ms & show" - here just update display
-		if (prior_timer_countdown != timer_isr_countdown ){
-			prior_timer_countdown = timer_isr_countdown;
-			incremental_show_pong(&my_game, false);
-		}
-		if (timer_isr_countdown <= 0) {
-			// Move and animate every 500 ms
-			timer_isr_countdown = timer_isr_500ms_restart;
-			if (turns < 3){
-				turns ++;
-				pong_periodic_play(&my_game);
-			}
-			else {
-				turns = 0;
-				key = get_keypd_key();
+		//Normal Operation with keypad, circle queue, and buzzer.
+		// Check for user input every 1 ms & paint one block of the display.
+				/**if (prior_timer_countdown != timer_isr_countdown ){
+					prior_timer_countdown = timer_isr_countdown;
+					// If time changed, about 1 ms has elapsed.
+					// Once each 1 ms, read input pins from user knob and then
+					// update "knob" object (which debounces each input pin and
+					// then calculates user command).
 
-				Q_data command_packet_p1 = {.p1_buttonPressed = keypd_translate(key)};
-				Q_data command_packet_p2 = {.p2_buttonPressed = keypd_translate(key)};
-				keyboard_q.put(&keyboard_q, &command_packet_p1);
-				keyboard_q.put(&keyboard_q, &command_packet_p2);
+					bool user_knob_1_pin_A = (GPIO_PIN_SET == HAL_GPIO_ReadPin(QuadKnobA_GPIO_Port, QuadKnobA_Pin)); //Keypad stuff here.
+					bool user_knob_1_pin_B = (GPIO_PIN_SET == HAL_GPIO_ReadPin(QuadKnobB_GPIO_Port, QuadKnobB_Pin));
+					user_knob_1.update(&user_knob_1, user_knob_1_pin_A, user_knob_1_pin_B);
 
-				player1_heading_update(&my_game, &keyboard_q);
-				player2_heading_update(&my_game, &keyboard_q);
-				//ball_heading_update(&my_game);
-				pong_periodic_play(&my_game);
-			}
-			incremental_show_pong(&my_game, true); //HardFault Error here only on the 9th call
-		}
-#endif
+					// Get user command from "knob" - if any action, make it a queue packet and then mail it.
+					if (user_knob_1.get(&user_knob_1) != QUADKNOB_STILL){
+						Q_data command_packet; //New Queue Code here
+						command_packet.twist = user_knob_1.get(&user_knob_1); //Keypad Code here
+						turn_q.put(&turn_q, &command_packet);
+					}
+					player1_heading_update(&my_game, &turn_q);
+					player2_heading_update(&my_game, &turn_q);
+				// ASSERT HEADING IS VALID
+					while ((my_game.ball_heading != BALL_UP)&&
+							(my_game.ball_heading != BALL_DOWN)&&
+							(my_game.ball_heading != BALL_UPRIGHT)&&
+							(my_game.ball_heading != BALL_UPLEFT)&&
+							(my_game.ball_heading != BALL_DOWNRIGHT)&&
+							(my_game.ball_heading != BALL_DOWNLEFT));
+					incremental_show_pong((const snake_game *)&my_game, false);
+				}
+				if (timer_isr_countdown <= 0) {
+					// Move and animate every 500 ms
+					timer_isr_countdown = timer_isr_500ms_restart;
+					pong_periodic_play(&my_game);
+					incremental_show_pong(&my_game, true);
+				}
 */
+#endif
+
 #ifdef TEST_WITHOUT_INPUT
 		static int turns = 0;
 		// Normally "check for user input every 1 ms & show" - here just update display

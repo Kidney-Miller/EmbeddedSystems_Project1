@@ -73,7 +73,6 @@ bool player1_plot(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
 		}
 		b[x][y] = 1;
 	}
-	p->player1.y = y;
 
 	return good;
 }
@@ -102,7 +101,7 @@ bool player2_plot(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
 			}
 			b[x][y] = 2;
 		}
-	p->player2.y = y;
+
 	return good;
 }
 
@@ -140,8 +139,6 @@ bool ball_plot(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
 
 	b[x][y] = -1; //Ball Value is -1.
 
-	p->ball.x = x;
-	p->ball.y = y;
 	return good;
 }
 
@@ -185,39 +182,100 @@ void detect_collision(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
 		p->ball_hit = true;
 	}
 }
-//
-void get_collision_cords(pong_game* p) {
-	int8_t x = p->ball.x;
-	int8_t y = p->ball.y;
-	enum ball_directions newHeading = p->ball_heading;
 
-	//Returns the bounce heading.
-	//newHeading = ball_opposite_direction(newHeading);
+//Gets the next X + Y value for player 1, based off heading.
+void update_P1_XY(pong_game* p) {
+	XY_PT next_move = p->player1;
 
-	switch (newHeading) {
-	//LEFT
-	case BALL_LEFT: x--; break;
-	// RIGHT
-	case BALL_RIGHT: x++; break;
-	//UP
-	case BALL_UP: y++; break;
-	case BALL_UPLEFT: x--; y++; break;
-	case BALL_UPRIGHT: x++; y++; break;
-	//DOWN
-	case BALL_DOWN: y--; break;
-	case BALL_DOWNLEFT: x--;  y--; break;
-	case BALL_DOWNRIGHT: x++;  y--; break;
-	default:
-		for (int bc = 0; bc < ERROR_DISPLAY_BLOCK_COUNT; bc++) {
-			display_dark_square(error_bar[bc].x, error_bar[bc].y);
-		} //Display Error.
+	switch(p->p1_heading){
+		case PLYR_UP: next_move.y++; break;
+		case PLYR_STAY: break;
+		case PLYR_DOWN: next_move.y--; break;
+		default:
+			for (int bc = 0; bc < ERROR_DISPLAY_BLOCK_COUNT; bc++) {
+				display_dark_square(error_bar[bc].x, error_bar[bc].y);
+			} //Display Error.
 	}
+
+	//X VALUE DOESNT CHANGE
+	if(next_move.y >= 7) {
+		next_move.y = 7;
+	} else if(next_move.y <= 0) {
+		next_move.y = 0;
+	}
+
+	p->player1.y = next_move.y;
+
+}
+
+//Gets the next X + Y value for player 2, based off heading.
+void update_P2_XY(pong_game* p) {
+	XY_PT next_move = p->player2;
+
+	switch(p->p2_heading){
+		case PLYR_UP: next_move.y++; break;
+		case PLYR_STAY: break;
+		case PLYR_DOWN: next_move.y--; break;
+		default:
+			for (int bc = 0; bc < ERROR_DISPLAY_BLOCK_COUNT; bc++) {
+				display_dark_square(error_bar[bc].x, error_bar[bc].y);
+			} //Display Error.
+	}
+
+	//X VALUE DOESNT CHANGE
+	if(next_move.y >= 7) {
+		next_move.y = 7;
+	} else if(next_move.y <= 0) {
+		next_move.y = 0;
+	}
+
+	p->player2.y = next_move.y;
+
+}
+
+
+//Gets the next X + Y value for the ball, based off heading.
+void update_ball_XY(pong_game* p) {
+	XY_PT next_move = p->ball;
+
+	switch (p->ball_heading) {
+			//LEFT
+			case BALL_LEFT: next_move.x--; break;
+
+			// RIGHT
+			case BALL_RIGHT: next_move.x++; break;
+
+			//UP
+			case BALL_UP: next_move.y++; break;
+			case BALL_UPLEFT: next_move.x--; next_move.y++; break;
+			case BALL_UPRIGHT: next_move.x++; next_move.y++; break;
+
+			//DOWN
+			case BALL_DOWN: next_move.y--; break;
+			case BALL_DOWNLEFT: next_move.x--;  next_move.y--; break;
+			case BALL_DOWNRIGHT: next_move.x++;  next_move.y--; break;
+
+			default:
+				for (int bc = 0; bc < ERROR_DISPLAY_BLOCK_COUNT; bc++) {
+					display_dark_square(error_bar[bc].x, error_bar[bc].y);
+				} //Display Error.
+
+		}
+	//If y to big/small fix it.
+	if(next_move.y >= CHECKS_WIDE) {next_move.y = CHECKS_WIDE - 1;}
+	else if(next_move.y < 0) {next_move.y = 0;}
+	//If x to big/small fix it.
+	if(next_move.x >= CHECKS_WIDE){next_move.x = CHECKS_WIDE - 1;}
+	else if(next_move.x < 0) {next_move.x = 0;}
+
+	p->ball = next_move;
+
 }
 
 void pong_game_init(pong_game* p) {
-	const XY_PT initial_player1 = { 0,4 };
+	const XY_PT initial_player1 = { 0,3 };
 	const XY_PT initial_player2 = { 7,4 };
-	const XY_PT initial_ball = { 3,3 };
+	const XY_PT initial_ball = { 4,1 };
 	const int8_t paddle_length = 2;
 
 	p->player_length = paddle_length;
@@ -426,12 +484,12 @@ void pong_periodic_play(pong_game* p) {
 	// Always clear the board and redraw it.
 	for (int x = 0; x < CHECKS_WIDE; x++) {
 		for (int y = 0; y < CHECKS_WIDE; y++) {
-			//Set Upper Boundary for Board.
+			//Set Lower Boundary for Board.
 			if ((x == 1 && y == 0) || (x == 2 && y == 0)
 			  || (x == 3 && y == 0) || (x == 4 && y == 0) ||
 			  (x == 5 && y == 0) || (x == 6 && y == 0)) {
 				board[x][y] = 3;
-			}//Set Lower Boundary for Board.
+			}//Set Upper Boundary for Board.
 			else if ((x == 1 && y == 7) || (x == 2 && y == 7)
 			  || (x == 3 && y == 7) || (x == 4 && y == 7) ||
 			  (x == 5 && y == 7) || (x == 6 && y == 7)) {
@@ -452,31 +510,30 @@ void pong_periodic_play(pong_game* p) {
 		player1_plot(p, board);
 		player2_plot(p, board);
 		ball_plot(p, board);
-		//futureBall_cords(p);
 	}
-	//Check for ball collision:
+
 	//Get ball's next move?
+	update_P1_XY(p);
+	update_P2_XY(p);
+	update_ball_XY(p);
+
+
 	nextBallCords(p);
 	bool deadBall = isBallDead(p);
-	//int8_t test = board[next_head.x][next_head.y];
+
 	// Check to see if ball is in a dead position.
 	if ((deadBall == true) && p->ball_hit == false) {//(board[p->future_ball.x][p->future_ball.y] == 0)) {
 		// CRASH!
 		while (1);
 	}
 
-	// Is the heading a normal move into an empty cell?
-	else if (board[p->future_ball.x][p->future_ball.y] == 0) {
-		//p->ball.x = p->future_ball.x;
-		//p->ball.y = p->future_ball.y;
-		//Just continue.
-
-	}
-
 	//Collision
 	//PLAYER ONE:
-	if(p->future_ball.x && board[p->future_ball.x][p->future_ball.y] == 1) {
+	if(p->future_ball.x == 0 && board[p->future_ball.x][p->future_ball.y] == 1) {
 		hit_player_one(p);
+		nextBallCords(p);
+		p->ball.x = p->future_ball.x;
+		p->ball.y = p->future_ball.y;
 
 	//PLAYER TWO:
 	} else if(p->future_ball.x == 7 && board[p->future_ball.x][p->future_ball.y] == 2){
@@ -485,14 +542,19 @@ void pong_periodic_play(pong_game* p) {
 		p->ball.x = p->future_ball.x;
 		p->ball.y = p->future_ball.y;
 
-	//UPPER WALL:
-	} else if(p->future_ball.y == 7 && board[p->future_ball.x][p->future_ball.y] == 3){
-		hit_upper_wall(p);
-
 	//LOWER WALL:
-	} else if(p->future_ball.y == 0 && board[p->future_ball.x][p->future_ball.y] == 4){
+	} else if(p->future_ball.y == 0 && board[p->future_ball.x][p->future_ball.y] == 3){
 		hit_lower_wall(p);
+		nextBallCords(p);
+		p->ball.x = p->future_ball.x;
+		p->ball.y = p->future_ball.y;
 
+	//UPPER WALL:
+	} else if(p->future_ball.y == 7 && board[p->future_ball.x][p->future_ball.y] == 4){
+		hit_upper_wall(p);
+		nextBallCords(p);
+		p->ball.x = p->future_ball.x;
+		p->ball.y = p->future_ball.y;
 	}
 }
 
