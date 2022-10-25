@@ -70,7 +70,16 @@ void Error_Handler(void);
 #define TCK_Pin GPIO_PIN_14
 #define TCK_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
-
+#define QuadKnobA_Pin GPIO_PIN_0
+#define QuadKnobA_GPIO_Port GPIOC
+#define QuadKnobB_Pin GPIO_PIN_1
+#define QuadKnobB_GPIO_Port GPIOC
+#define DOGS_reset_Pin GPIO_PIN_0
+#define DOGS_reset_GPIO_Port GPIOA
+#define DOGS_CD_Pin GPIO_PIN_1
+#define DOGS_CD_GPIO_Port GPIOA
+#define SPI_soft_nSS_Pin GPIO_PIN_9
+#define SPI_soft_nSS_GPIO_Port GPIOD
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

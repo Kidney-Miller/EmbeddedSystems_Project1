@@ -10,7 +10,9 @@
 #include "pong_enums.h"
 #include "show_pong.h"
 #include "smc_queue.h"
+#include "Keypad.h"
 #include "display_DOGS_102.h"
+#include "SoundDriver.h"
 
 #include <stdint.h>
 #include <stdlib.h> // rand
@@ -26,8 +28,10 @@
 
 ///////////////////////////
 // Test -without input, the expected output =?
-// Without_Input - Testing
-#define TEST_WITHOUT_INPUT
+// Without_Input - WORKING_PONG
+//#define TEST_WITHOUT_INPUT
+//#define TEST_WITH_INPUT
+#define WORKING_PONG
 
 
 
@@ -52,15 +56,17 @@ void pong_main(void){
 	volatile uint16_t ram_dummy_1 = MEMORY_BARRIER_1;
 	pong_game_init(&my_game);
 
-	// Construct IPC
+	// Construct IPC (QUEUE)
 	Smc_queue keyboard_q;
 	volatile uint16_t ram_dummy_2 = MEMORY_BARRIER_2;
 	smc_queue_init(&keyboard_q);
 
 	// Input object NEEDS REPLACED WITH KEYBOARD!!!
-	//QuadKnob user_knob_1;
+	SoundDriver buzzer;
 	volatile uint16_t ram_dummy_3 = MEMORY_BARRIER_3;
-	//quadknob_init(&user_knob_1);
+	bool buzzer_hit = false;
+	SoundDriver_init(&buzzer);
+	HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_SET);
 
 	// Output object
 	// Block all interrupts while initializing - initial protocol timing is critical.
@@ -92,52 +98,53 @@ void pong_main(void){
 			while(1);
 		}
 
-#ifndef TEST_WITH_INPUT
-		//Normal Operation with keypad, circle queue, and buzzer.
-		// Check for user input every 1 ms & paint one block of the display.
-				/**if (prior_timer_countdown != timer_isr_countdown ){
+#ifdef TEST_WITH_INPUT
+		//Testing for Pong with Keypad.
+		char key;
+		enum keypad_buttonPress change;
+				static int turns = 0;
+				// Normally "check for user input every 1 ms & show" - here just update display
+				if (prior_timer_countdown != timer_isr_countdown ){
 					prior_timer_countdown = timer_isr_countdown;
-					// If time changed, about 1 ms has elapsed.
-					// Once each 1 ms, read input pins from user knob and then
-					// update "knob" object (which debounces each input pin and
-					// then calculates user command).
-
-					bool user_knob_1_pin_A = (GPIO_PIN_SET == HAL_GPIO_ReadPin(QuadKnobA_GPIO_Port, QuadKnobA_Pin)); //Keypad stuff here.
-					bool user_knob_1_pin_B = (GPIO_PIN_SET == HAL_GPIO_ReadPin(QuadKnobB_GPIO_Port, QuadKnobB_Pin));
-					user_knob_1.update(&user_knob_1, user_knob_1_pin_A, user_knob_1_pin_B);
-
-					// Get user command from "knob" - if any action, make it a queue packet and then mail it.
-					if (user_knob_1.get(&user_knob_1) != QUADKNOB_STILL){
-						Q_data command_packet; //New Queue Code here
-						command_packet.twist = user_knob_1.get(&user_knob_1); //Keypad Code here
-						turn_q.put(&turn_q, &command_packet);
-					}
-					player1_heading_update(&my_game, &turn_q);
-					player2_heading_update(&my_game, &turn_q);
-				// ASSERT HEADING IS VALID
-					while ((my_game.ball_heading != BALL_UP)&&
-							(my_game.ball_heading != BALL_DOWN)&&
-							(my_game.ball_heading != BALL_UPRIGHT)&&
-							(my_game.ball_heading != BALL_UPLEFT)&&
-							(my_game.ball_heading != BALL_DOWNRIGHT)&&
-							(my_game.ball_heading != BALL_DOWNLEFT));
-					incremental_show_pong((const snake_game *)&my_game, false);
+					incremental_show_pong(&my_game, false);
+					buzzer_hit = my_game.ball_hit;
+					key = get_keypd_key();
 				}
 				if (timer_isr_countdown <= 0) {
 					// Move and animate every 500 ms
 					timer_isr_countdown = timer_isr_500ms_restart;
-					pong_periodic_play(&my_game);
+					if (turns < 3){
+						turns ++;
+						pong_periodic_play(&my_game);
+					}
+					else {
+						turns = 0;
+						//key = get_keypd_key();
+						change = keypd_translate(key);
+
+						Q_data command_packet_p1 = {.p1_buttonPressed = change};
+						Q_data command_packet_p2 = {.p2_buttonPressed = change};
+						keyboard_q.put(&keyboard_q, &command_packet_p1);
+						keyboard_q.put(&keyboard_q, &command_packet_p2);
+
+						player1_heading_update(&my_game, &keyboard_q);
+						player2_heading_update(&my_game, &keyboard_q);
+
+						pong_periodic_play(&my_game);
+					}
+					SoundDriver_update (&buzzer, &buzzer_hit);
 					incremental_show_pong(&my_game, true);
 				}
-*/
 #endif
 
 #ifdef TEST_WITHOUT_INPUT
+		//Testing without input.
 		static int turns = 0;
 		// Normally "check for user input every 1 ms & show" - here just update display
 		if (prior_timer_countdown != timer_isr_countdown ){
 			prior_timer_countdown = timer_isr_countdown;
 			incremental_show_pong(&my_game, false);
+			buzzer_hit = my_game.ball_hit;
 		}
 		if (timer_isr_countdown <= 0) {
 			// Move and animate every 500 ms
@@ -159,8 +166,56 @@ void pong_main(void){
 				//ball_heading_update(&my_game);
 				pong_periodic_play(&my_game);
 			}
-			incremental_show_pong(&my_game, true); //HardFault Error here only on the 9th call
+			//buzzer_hit = my_game.ball_hit;
+			SoundDriver_update (&buzzer, &buzzer_hit);
+			incremental_show_pong(&my_game, true);
 		}
 #endif
+
+#ifdef WORKING_PONG
+		//Normal Operation with keypad, circle queue, and buzzer.
+		char key;
+		enum keypad_buttonPress change;
+		// Check for user input every 1 ms & paint one block of the display.
+				if (prior_timer_countdown != timer_isr_countdown ){
+					prior_timer_countdown = timer_isr_countdown;
+					buzzer_hit = my_game.ball_hit;
+					// If time changed, about 1 ms has elapsed.
+					// Once each 1 ms, read input pins from user
+
+					key = get_keypd_key();
+					change = keypd_translate(key);
+
+
+					// Get user command from "keyboard" - if any action, make it a queue packet and then mail it.
+					if (change != ZERO_PRESSED){
+						Q_data command_packet_POne, command_packet_PTwo;
+
+						command_packet_POne.buttonPressed = change;
+						command_packet_PTwo.buttonPressed = change;
+						keyboard_q.put(&keyboard_q, &command_packet_POne);
+						keyboard_q.put(&keyboard_q, &command_packet_PTwo);
+
+
+					}
+
+					//HEADING UPDATES!!
+					player1_heading_update(&my_game, &keyboard_q);
+					player2_heading_update(&my_game, &keyboard_q);
+
+					incremental_show_pong(&my_game, false);
+				}
+				if (timer_isr_countdown <= 0) {
+					// Move and animate every 500 ms
+					timer_isr_countdown = timer_isr_500ms_restart;
+					pong_periodic_play(&my_game);
+					SoundDriver_update (&buzzer, &buzzer_hit);
+					incremental_show_pong(&my_game, true);
+
+				}
+#endif
+
+
+
 	}
 }

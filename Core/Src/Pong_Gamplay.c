@@ -303,7 +303,7 @@ void pacify_compiler() {
 
 }
 
-//PLAYER HEADING UPDATES NEED MORE KEYPAD DATA BEFORE FUNCTIONAL
+//PLAYER HEADING UPDATES
 void player1_heading_update(pong_game* p, Smc_queue* q) {
 	Q_data msg;
 	bool data_available;
@@ -312,21 +312,21 @@ void player1_heading_update(pong_game* p, Smc_queue* q) {
 	else {
 		switch (p->p1_heading) {
 		case PLYR_UP:
-			//p->p1_heading = (msg.p1_buttonPressed == ONE_PRESSED) ? PLYR_UP : PLYR_STAY;
-			if(msg.p1_buttonPressed == ONE_PRESSED) {p->p1_heading = PLYR_UP;}
-			else if(msg.p1_buttonPressed == SEVEN_PRESSED) {p->p1_heading = PLYR_DOWN;}
+			//p->p1_heading = (msg.buttonPressed == ONE_PRESSED) ? PLYR_UP : PLYR_STAY;
+			if(msg.buttonPressed == ONE_PRESSED) {p->p1_heading = PLYR_UP;}
+			else if(msg.buttonPressed == SEVEN_PRESSED) {p->p1_heading = PLYR_DOWN;}
 			else {p->p1_heading = PLYR_STAY;}
 			break;
 		case PLYR_DOWN:
-			//p->p1_heading = (msg.p1_buttonPressed == SEVEN_PRESSED) ? PLYR_DOWN : PLYR_STAY;
-			if(msg.p1_buttonPressed == SEVEN_PRESSED) {p->p1_heading = PLYR_DOWN;}
-			else if(msg.p1_buttonPressed == ONE_PRESSED) {p->p1_heading = PLYR_UP;}
+			//p->p1_heading = (msg.buttonPressed == SEVEN_PRESSED) ? PLYR_DOWN : PLYR_STAY;
+			if(msg.buttonPressed == SEVEN_PRESSED) {p->p1_heading = PLYR_DOWN;}
+			else if(msg.buttonPressed == ONE_PRESSED) {p->p1_heading = PLYR_UP;}
 			else {p->p1_heading = PLYR_STAY;}
 			break;
 		case PLYR_STAY:
-			//p->p1_heading = (msg.p1_buttonPressed == ONE_PRESSED) ? PLYR_UP : PLYR_DOWN;
-			if(msg.p1_buttonPressed == ONE_PRESSED) {p->p1_heading = PLYR_UP;}
-			else if(msg.p1_buttonPressed == SEVEN_PRESSED) {p->p1_heading = PLYR_DOWN;}
+			//p->p1_heading = (msg.buttonPressed == ONE_PRESSED) ? PLYR_UP : PLYR_DOWN;
+			if(msg.buttonPressed == ONE_PRESSED) {p->p1_heading = PLYR_UP;}
+			else if(msg.buttonPressed == SEVEN_PRESSED) {p->p1_heading = PLYR_DOWN;}
 			else {p->p1_heading = PLYR_STAY;}
 			break;
 		default: //p->heading remains unchanged. No good way to say this in C.
@@ -344,21 +344,21 @@ void player2_heading_update(pong_game* p, Smc_queue* q) {
 	else {
 		switch (p->p2_heading) {
 		case PLYR_UP:
-			//p->p2_heading = (msg.p2_buttonPressed == THREE_PRESSED) ? PLYR_UP : PLYR_STAY;
-			if(msg.p2_buttonPressed == THREE_PRESSED) {p->p2_heading = PLYR_UP;}
-			else if(msg.p2_buttonPressed == NINE_PRESSED) {p->p2_heading = PLYR_DOWN;}
+			//p->p2_heading = (msg.buttonPressed == THREE_PRESSED) ? PLYR_UP : PLYR_STAY;
+			if(msg.buttonPressed == THREE_PRESSED) {p->p2_heading = PLYR_UP;}
+			else if(msg.buttonPressed == NINE_PRESSED) {p->p2_heading = PLYR_DOWN;}
 			else {p->p2_heading = PLYR_STAY;}
 			break;
 		case PLYR_DOWN:
-			//p->p2_heading = (msg.p2_buttonPressed == NINE_PRESSED) ?PLYR_DOWN : PLYR_STAY;
-			if(msg.p2_buttonPressed == NINE_PRESSED) {p->p2_heading = PLYR_DOWN;}
-			else if(msg.p2_buttonPressed == THREE_PRESSED) {p->p2_heading = PLYR_UP;}
+			//p->p2_heading = (msg.buttonPressed == NINE_PRESSED) ?PLYR_DOWN : PLYR_STAY;
+			if(msg.buttonPressed == NINE_PRESSED) {p->p2_heading = PLYR_DOWN;}
+			else if(msg.buttonPressed == THREE_PRESSED) {p->p2_heading = PLYR_UP;}
 			else {p->p2_heading = PLYR_STAY;}
 			break;
 		case PLYR_STAY:
-			//p->p2_heading = (msg.p2_buttonPressed == NINE_PRESSED) ?PLYR_UP : PLYR_DOWN;
-			if(msg.p2_buttonPressed == THREE_PRESSED) {p->p2_heading = PLYR_UP;}
-			else if(msg.p2_buttonPressed == NINE_PRESSED) {p->p2_heading = PLYR_DOWN;}
+			//p->p2_heading = (msg.buttonPressed == NINE_PRESSED) ?PLYR_UP : PLYR_DOWN;
+			if(msg.buttonPressed == THREE_PRESSED) {p->p2_heading = PLYR_UP;}
+			else if(msg.buttonPressed == NINE_PRESSED) {p->p2_heading = PLYR_DOWN;}
 			else {p->p2_heading = PLYR_STAY;}
 			break;
 		default: //p->heading remains unchanged. No good way to say this in C.
@@ -501,7 +501,6 @@ void pong_periodic_play(pong_game* p) {
 		}
 	}
 	bool ok;
-	detect_collision(p, board);
 	ok = player1_plot(p, board) && player2_plot(p, board) && ball_plot(p, board); //NEEDS JPL FIXIN'
 	if (!ok) {
 		display_checkerboard();
@@ -520,6 +519,7 @@ void pong_periodic_play(pong_game* p) {
 
 	nextBallCords(p);
 	bool deadBall = isBallDead(p);
+	detect_collision(p, board);
 
 	// Check to see if ball is in a dead position.
 	if ((deadBall == true) && p->ball_hit == false) {//(board[p->future_ball.x][p->future_ball.y] == 0)) {

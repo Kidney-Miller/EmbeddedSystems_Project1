@@ -12,7 +12,7 @@
 #include <stddef.h> // size_t
 #include <stdint.h>
 #include <stdbool.h>
-#include "snake_enums.h"
+#include "pong_enums.h"
 
 
 #define SMC_Q_BUFSIZE 10
@@ -31,15 +31,14 @@
 typedef union {
 		int int_val;
 		float float_val;
-		enum Twist twist;
-		enum keypad_buttonPress p1_buttonPressed;
-		enum keypad_buttonPress p2_buttonPressed;
+		enum keypad_buttonPress buttonPressed;
+		//enum keypad_buttonPress p2_buttonPressed;
 } Q_data;
 
 typedef struct smc_queue_struct {
 	// ATTRIBUTES
 	size_t cap;
-	size_t burden;
+	size_t items;
 	size_t tail;
 	size_t head;
 	Q_data buffer[SMC_Q_BUFSIZE];

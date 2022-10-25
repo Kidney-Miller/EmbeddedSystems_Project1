@@ -35,7 +35,7 @@
 // created with STM32CubeMX.
 #include "main.h"
 #include "display_DOGS_102.h"
-#include "snake_gameplay.h" // To learn "CHECKS_WIDE"
+#include "Pong_Gameplay.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // Hand-written code that Cube won't help with
@@ -71,7 +71,7 @@ static void spi_msg_out(DOGS_packet pkt){
 	// Use the HAL.
 	// SPI1: Send 1 byte of pkt.byte, and timeout only after 100 ticks
 	// EXPECT ABOUT 16 us of delay from PD_6 low to SCK action.
-	HAL_SPI_Transmit(&hspi2, (uint8_t *)&pkt.byte, 1, SPI_timeout);
+	HAL_SPI_Transmit(&hspi2, (uint8_t *)&pkt.byte, 1, SPI_timeout);//HERE
 }
 
 
