@@ -209,7 +209,7 @@ void pong_main(void){
 					// Move and animate every 500 ms
 					timer_isr_countdown = timer_isr_500ms_restart;
 					pong_periodic_play(&my_game);
-					SoundDriver_update (&buzzer, &buzzer_hit);
+					SoundDriver_update(&buzzer, &buzzer_hit);
 					incremental_show_pong(&my_game, true);
 
 				}

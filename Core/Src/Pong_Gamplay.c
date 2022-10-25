@@ -304,6 +304,7 @@ void pacify_compiler() {
 }
 
 //PLAYER HEADING UPDATES
+//Player 1:
 void player1_heading_update(pong_game* p, Smc_queue* q) {
 	Q_data msg;
 	bool data_available;
@@ -335,7 +336,7 @@ void player1_heading_update(pong_game* p, Smc_queue* q) {
 	}
 }
 
-//Update Player 2 heading
+//Player 2:
 void player2_heading_update(pong_game* p, Smc_queue* q) {
 	Q_data msg;
 	bool data_available;
@@ -366,38 +367,7 @@ void player2_heading_update(pong_game* p, Smc_queue* q) {
 		}
 	}
 }
-//Ball heading update. (OLD)
-void ball_heading_update(pong_game* p) {
 
-		switch (p->ball_heading) {
-		case BALL_UP:
-			p->ball_heading = (p->ball_hit == false) ? BALL_UP : BALL_DOWN;
-			break;
-		case BALL_UPLEFT:
-			p->ball_heading = (p->ball_hit == false) ? BALL_UPLEFT : BALL_UPRIGHT;
-			break;
-		case BALL_UPRIGHT:
-			p->ball_heading = (p->ball_hit == false) ? BALL_DOWNRIGHT : BALL_UPRIGHT;
-			break;
-		case BALL_DOWN:
-			p->ball_heading = (p->ball_hit == false) ? BALL_DOWN : BALL_UP;
-			break;
-		case BALL_DOWNLEFT:
-			p->ball_heading = (p->ball_hit == false) ? BALL_DOWNLEFT : BALL_UPLEFT;
-			break;
-		case BALL_DOWNRIGHT:
-			p->ball_heading = (p->ball_hit == false) ? BALL_DOWNRIGHT : BALL_DOWNLEFT;
-			break;
-		case BALL_LEFT:
-			p->ball_heading = (p->ball_hit == false) ? BALL_LEFT : BALL_RIGHT;
-			break;
-		case BALL_RIGHT:
-			p->ball_heading = (p->ball_hit == false) ? BALL_RIGHT : BALL_LEFT;
-			break;
-		default: //s->heading remains unchanged. No good way to say this in C.
-			pacify_compiler();
-	}
-}
 
 //Checks to see if ball is in a dead position.
 bool isBallDead(pong_game* p) {
@@ -416,7 +386,7 @@ bool isBallDead(pong_game* p) {
 			case 6: dead = true; break;
 			case 7: dead = true; break;
 			default: break;
-		}
+		} break;
 		case 7: switch (y) {
 			case 0: dead = true; break;
 			case 1: dead = true; break;
@@ -427,7 +397,7 @@ bool isBallDead(pong_game* p) {
 			case 6: dead = true; break;
 			case 7: dead = true; break;
 			default: break;
-		}
+		} break;
 		default: break;
 	}
 
@@ -522,7 +492,7 @@ void pong_periodic_play(pong_game* p) {
 	detect_collision(p, board);
 
 	// Check to see if ball is in a dead position.
-	if ((deadBall == true) && p->ball_hit == false) {//(board[p->future_ball.x][p->future_ball.y] == 0)) {
+	if ((deadBall == true) && p->ball_hit == false) {
 		// CRASH!
 		while (1);
 	}
