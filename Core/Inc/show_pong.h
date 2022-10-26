@@ -10,6 +10,6 @@
 
 #include "Pong_Gameplay.h"
 
-void incremental_show_pong(pong_game* p, bool board_updated);
+void incremental_show_pong(const pong_game* p, bool board_updated); //NEED CONST FOR JPL?
 
 #endif /* INC_SHOW_PONG_H_ */

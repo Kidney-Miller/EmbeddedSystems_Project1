@@ -31,25 +31,36 @@
 //Pong Stuff:
 const XY_PT error_bar[ERROR_DISPLAY_BLOCK_COUNT] = ERROR_DISPLAY_BAD_HEADING;
 
-void ball_opposite_direction(pong_game* p) {
-	switch(p->ball_heading) {
-		//UP
-		case BALL_UP: p->ball_heading = BALL_DOWN; break;
-		case BALL_UPLEFT: p->ball_heading = BALL_UPRIGHT; break;
-		case BALL_UPRIGHT: p->ball_heading = BALL_UPLEFT; break;
-		//DOWN
-		case BALL_DOWN: p->ball_heading = BALL_UP; break;
-		case BALL_DOWNLEFT: p->ball_heading = BALL_UPLEFT; break;
-		case BALL_DOWNRIGHT: p->ball_heading = BALL_DOWNLEFT; break;
-		//LEFT
-		case BALL_LEFT: p->ball_heading = BALL_RIGHT; break;
-		//RIGHT
-		case BALL_RIGHT: p->ball_heading = BALL_LEFT; break;
-		default: break;
-	}
+
+//Start the game.
+void pong_game_init(pong_game* p) {
+	const XY_PT initial_player1 = { 0,3 };
+	const XY_PT initial_player2 = { 7,4 };
+	const XY_PT initial_ball = { 4,1 };
+	const int8_t paddle_length = 2;
+
+	p->player_length = paddle_length;
+
+	//Player 1:
+	p->player1.x = initial_player1.x;
+	p->player1.y = initial_player1.y;
+	p->p1_heading = PLYR_STAY;
+
+	//Player 2:
+	p->player2.x = initial_player2.x;
+	p->player2.y = initial_player2.y;
+	p->p2_heading = PLYR_STAY;
+
+	//Ball
+	p->ball.x = initial_ball.x;
+	p->ball.y = initial_ball.y;
+	p->future_ball.x = initial_ball.x + 1;
+	p->future_ball.y = initial_ball.y + 1;
+	p->ball_heading = BALL_UPRIGHT; // Start off towards the upper right.
+	p->ball_hit = false;
 }
 
-void player1_plot(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
+void player1_plot(const pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
 	int8_t x = p-> player1.x;
 	int8_t y = p-> player1.y;
 	b[x][y] = 1; // Player 1 starts here: post a 1!
@@ -75,7 +86,7 @@ void player1_plot(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
 
 }
 
-void player2_plot(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
+void player2_plot(const pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
 	int8_t x = p->player2.x;
 	int8_t y = p->player2.y;
 	b[x][y] = 2; // Player 2 starts here: post a 2!
@@ -101,7 +112,7 @@ void player2_plot(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
 
 }
 
-void ball_plot(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
+void ball_plot(const pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
 	int16_t x = p->ball.x;
 	int16_t y = p->ball.y;
 
@@ -264,34 +275,6 @@ void update_ball_XY(pong_game* p) {
 
 	p->ball = next_move;
 
-}
-
-//Start the game.
-void pong_game_init(pong_game* p) {
-	const XY_PT initial_player1 = { 0,3 };
-	const XY_PT initial_player2 = { 7,4 };
-	const XY_PT initial_ball = { 4,1 };
-	const int8_t paddle_length = 2;
-
-	p->player_length = paddle_length;
-
-	//Player 1:
-	p->player1.x = initial_player1.x;
-	p->player1.y = initial_player1.y;
-	p->p1_heading = PLYR_STAY;
-
-	//Player 2:
-	p->player2.x = initial_player2.x;
-	p->player2.y = initial_player2.y;
-	p->p2_heading = PLYR_STAY;
-
-	//Ball
-	p->ball.x = initial_ball.x;
-	p->ball.y = initial_ball.y;
-	p->future_ball.x = initial_ball.x + 1;
-	p->future_ball.y = initial_ball.y + 1;
-	p->ball_heading = BALL_UPRIGHT; // Start off towards the upper right.
-	p->ball_hit = false;
 }
 
 void pacify_compiler() {

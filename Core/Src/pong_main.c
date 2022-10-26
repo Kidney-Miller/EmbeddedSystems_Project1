@@ -3,6 +3,20 @@
  *
  *  Created on: Oct 11, 2022
  *      Author: krmiller21
+ *
+ *
+ *  JPL:
+ *
+ *  *6. Use IPC messages for task communication:
+ *  I believe we are mostly compliant with this rule in our game, but
+ *  I want to ensure we meet the JPL standards for this requirement so
+ *  I'm makinf note of it here. We use the IPC for communication between
+ *  tasks everywhere except on line 186. Here we set a boolean value,
+ *  buzzer_hit, defined in pong_main.c to the value of my_game.ball_hit.
+ *  This is required to get the buzzer to buzz on time with when the ball
+ *  would make contact. I'm not sure if we are in violation of JPL here
+ *  due to it being to variables in the same scope, but I want to make
+ *  sure we follow JPL with our documentation.
  */
 
 //Pong Includes
@@ -150,8 +164,8 @@ void pong_main(void){
 			else {
 				turns = 0;
 
-				Q_data command_packet_p1 = {.p1_buttonPressed = ZERO_PRESSED};
-				Q_data command_packet_p2 = {.p2_buttonPressed = ZERO_PRESSED};
+				Q_data command_packet_p1 = {.p1_buttonPressed = THREE_PRESSED};
+				Q_data command_packet_p2 = {.p2_buttonPressed = NINE_PRESSED};
 				keyboard_q.put(&keyboard_q, &command_packet_p1);
 				keyboard_q.put(&keyboard_q, &command_packet_p2);
 
@@ -173,7 +187,7 @@ void pong_main(void){
 		// Check for user input every 1 ms & paint one block of the display.
 				if (prior_timer_countdown != timer_isr_countdown ){
 					prior_timer_countdown = timer_isr_countdown;
-					//Violation of JPL?
+					//Violation of JPL rule 6*? See line 10 for explanation.
 					buzzer_hit = my_game.ball_hit;
 					// If time changed, about 1 ms has elapsed.
 					// Once each 1 ms, read input pins from user
@@ -197,6 +211,16 @@ void pong_main(void){
 					//HEADING UPDATES!!
 					player1_heading_update(&my_game, &keyboard_q);
 					player2_heading_update(&my_game, &keyboard_q);
+
+					//ASSERT PLAYER 1 HEADING IS VALID
+					while((my_game.p1_heading != PLYR_UP) &&
+							(my_game.p1_heading != PLYR_DOWN) &&
+							(my_game.p1_heading != PLYR_STAY));
+
+					//ASSERT PLAYER 2 HEADING IS VALID
+					while((my_game.p2_heading != PLYR_UP) &&
+						(my_game.p2_heading != PLYR_DOWN) &&
+						(my_game.p2_heading != PLYR_STAY));
 
 					incremental_show_pong(&my_game, false);
 				}
