@@ -11,10 +11,9 @@
 //Code References Go Here:
 #include <stdint.h>
 #include <stdbool.h>
-//#include "keypad.h"
+#include "keypad.h"
 #include "smc_queue.h"
 #include "pong_main.h"
-
 #include "pong_enums.h"
 
 
@@ -32,11 +31,9 @@ typedef struct {
 	enum ball_directions ball_heading;
 } pong_game;
 
-//UPDATED
-void ball_opposite_direction(pong_game* p);
-bool player1_plot(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]);
-bool player2_plot(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]);
-bool ball_plot(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]);
+void player1_plot(const pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]);
+void player2_plot(const pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]);
+void ball_plot(const pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]);
 void detect_collision(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]);
 void update_ball_XY(pong_game* p);
 void update_P1_XY(pong_game* p);
