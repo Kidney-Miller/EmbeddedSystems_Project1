@@ -7,9 +7,9 @@
 
 #ifndef KEYPAD_H_
 #define KEYPAD_H_
+#include "pong_enums.h"
 
-
-
-#endif /* KEYPAD_H_ */
 char get_keypd_key(void);
 enum keypad_buttonPress keypd_translate(char key);
+
+#endif /* KEYPAD_H_ */

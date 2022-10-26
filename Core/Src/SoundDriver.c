@@ -11,17 +11,17 @@
 
 void
 		SoundDriver_init(SoundDriver *self){
-		self->beepTime = 30000;
+		self->beepTime = 10000;
 	    self->update = &SoundDriver_update;
 }
 
 void SoundDriver_update (SoundDriver *self, bool *beepFlag){
 	if (*beepFlag) {
 	      for (volatile uint32_t n = 0; n < self->beepTime; n++);
-	      HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_RESET);
+	      HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_SET);
 	      for (volatile uint32_t n = 0; n < self->beepTime; n++);
 
-	      HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_SET);
+	      HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_RESET);
 	      *beepFlag = false;
 	}
 	else {
@@ -55,4 +55,3 @@ void SoundDriver_update (SoundDriver *self, bool *beepFlag){
  *
  *
  */
-

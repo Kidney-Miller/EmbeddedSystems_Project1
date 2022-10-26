@@ -3,6 +3,7 @@
  *
  *  Created on: Jul 26, 2022
  *      Author: carrolls
+ *      Modified By: krmiller21
  */
 
 #ifndef INC_DISPLAY_DOGS_102_H_
@@ -20,5 +21,7 @@ void display_snake_board(int8_t sb[CHECKS_WIDE][CHECKS_WIDE]);
 void display_white_square(uint8_t l_to_r, uint8_t t_to_b);
 void display_dark_square(uint8_t l_to_r, uint8_t t_to_b);
 
+//PONG:
+void display_pong_board(int8_t pb[CHECKS_WIDE][CHECKS_WIDE]);
 
 #endif /* INC_DISPLAY_DOGS_102_H_ */

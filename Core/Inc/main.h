@@ -57,6 +57,19 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define MCO_Pin GPIO_PIN_0
+#define MCO_GPIO_Port GPIOF
+#define USART2_TX_Pin GPIO_PIN_2
+#define USART2_TX_GPIO_Port GPIOA
+#define USART2_RX_Pin GPIO_PIN_3
+#define USART2_RX_GPIO_Port GPIOA
+#define LED_GREEN_Pin GPIO_PIN_5
+#define LED_GREEN_GPIO_Port GPIOA
+#define TMS_Pin GPIO_PIN_13
+#define TMS_GPIO_Port GPIOA
+#define TCK_Pin GPIO_PIN_14
+#define TCK_GPIO_Port GPIOA
+/* USER CODE BEGIN Private defines */
 #define QuadKnobA_Pin GPIO_PIN_0
 #define QuadKnobA_GPIO_Port GPIOC
 #define QuadKnobB_Pin GPIO_PIN_1
@@ -67,8 +80,6 @@ void Error_Handler(void);
 #define DOGS_CD_GPIO_Port GPIOA
 #define SPI_soft_nSS_Pin GPIO_PIN_9
 #define SPI_soft_nSS_GPIO_Port GPIOD
-/* USER CODE BEGIN Private defines */
-
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

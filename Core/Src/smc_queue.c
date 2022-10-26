@@ -12,7 +12,7 @@
 
 
 #include "smc_queue.h"
-#include "snake_enums.h"
+#include "pong_enums.h"
 
 Smc_queue* smc_queue_init(Smc_queue* q){
 	q->head = 0;
