@@ -13,21 +13,15 @@
 #include "Keypad.h"
 #include "display_DOGS_102.h"
 #include "SoundDriver.h"
-
+//STM Auto-Generated Code
 #include <stdint.h>
-#include <stdlib.h> // rand
+#include <stdlib.h>
 #include <stdbool.h>
 #include <cmsis_gcc.h>
 #include "main.h"
-//Snake Includes
-//#include "snake_main.h"
-//#include "snake_gameplay.h"
-//#include "snake_enums.h"
-//#include "quadknob.h"
-//#include "show_snake.h"
 
 ///////////////////////////
-// Test -without input, the expected output =?
+// Current Status - WORKING
 // Without_Input - WORKING_PONG
 //#define TEST_WITHOUT_INPUT
 //#define TEST_WITH_INPUT
@@ -179,6 +173,7 @@ void pong_main(void){
 		// Check for user input every 1 ms & paint one block of the display.
 				if (prior_timer_countdown != timer_isr_countdown ){
 					prior_timer_countdown = timer_isr_countdown;
+					//Violation of JPL?
 					buzzer_hit = my_game.ball_hit;
 					// If time changed, about 1 ms has elapsed.
 					// Once each 1 ms, read input pins from user

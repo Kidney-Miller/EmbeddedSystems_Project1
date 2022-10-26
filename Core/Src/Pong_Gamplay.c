@@ -49,8 +49,7 @@ void ball_opposite_direction(pong_game* p) {
 	}
 }
 
-bool player1_plot(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
-	bool good = true;
+void player1_plot(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
 	int8_t x = p-> player1.x;
 	int8_t y = p-> player1.y;
 	b[x][y] = 1; // Player 1 starts here: post a 1!
@@ -74,11 +73,9 @@ bool player1_plot(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
 		b[x][y] = 1;
 	}
 
-	return good;
 }
 
-bool player2_plot(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
-	bool good = true;
+void player2_plot(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
 	int8_t x = p->player2.x;
 	int8_t y = p->player2.y;
 	b[x][y] = 2; // Player 2 starts here: post a 2!
@@ -102,11 +99,9 @@ bool player2_plot(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
 			b[x][y] = 2;
 		}
 
-	return good;
 }
 
-bool ball_plot(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
-	bool good = true;
+void ball_plot(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
 	int16_t x = p->ball.x;
 	int16_t y = p->ball.y;
 
@@ -139,7 +134,6 @@ bool ball_plot(pong_game* p, int8_t b[CHECKS_WIDE][CHECKS_WIDE]) {
 
 	b[x][y] = -1; //Ball Value is -1.
 
-	return good;
 }
 
 //Calculates the future ball's cords.
@@ -272,6 +266,7 @@ void update_ball_XY(pong_game* p) {
 
 }
 
+//Start the game.
 void pong_game_init(pong_game* p) {
 	const XY_PT initial_player1 = { 0,3 };
 	const XY_PT initial_player2 = { 7,4 };
@@ -470,18 +465,13 @@ void pong_periodic_play(pong_game* p) {
 
 		}
 	}
-	bool ok;
-	ok = player1_plot(p, board) && player2_plot(p, board) && ball_plot(p, board); //NEEDS JPL FIXIN'
-	if (!ok) {
-		display_checkerboard();
-		for (volatile int32_t n = 0; n < BIG_DELAY_COUNT; n++);
-		pong_game_init(p);
-		player1_plot(p, board);
-		player2_plot(p, board);
-		ball_plot(p, board);
-	}
 
-	//Get ball's next move?
+	//Plot the game objects
+	player1_plot(p, board);
+	player2_plot(p, board);
+	ball_plot(p, board);
+
+	//Get ball's next move
 	update_P1_XY(p);
 	update_P2_XY(p);
 	update_ball_XY(p);
@@ -494,6 +484,7 @@ void pong_periodic_play(pong_game* p) {
 	// Check to see if ball is in a dead position.
 	if ((deadBall == true) && p->ball_hit == false) {
 		// CRASH!
+		display_checkerboard();
 		while (1);
 	}
 
